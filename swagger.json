@@ -1,0 +1,354 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+      "title": "Customer API",
+      "version": "1.0.0",
+      "description": "API Documentation for Customer Backend"
+    },
+    "servers": [
+      {
+        "url": "http://localhost:5000",
+        "description": "Local server"
+      },
+      {
+        "url": "https://customer-backend-app.herokuapp.com",
+        "description": "Production server"
+      }
+    ],
+    "paths": {
+      "/api/customers": {
+        "get": {
+          "summary": "Get all customers",
+          "parameters": [
+            {
+              "name": "page",
+              "in": "query",
+              "required": false,
+              "description": "Page number for pagination",
+              "schema": {
+                "type": "integer",
+                "default": 1
+              }
+            },
+            {
+              "name": "limit",
+              "in": "query",
+              "required": false,
+              "description": "Number of items per page",
+              "schema": {
+                "type": "integer",
+                "default": 10
+              }
+            },
+            {
+              "name": "gender",
+              "in": "query",
+              "required": false,
+              "description": "Filter by gender",
+              "schema": {
+                "type": "string",
+                "enum": ["Male", "Female", "Other"]
+              }
+            },
+            {
+              "name": "profession",
+              "in": "query",
+              "required": false,
+              "description": "Filter by profession",
+              "schema": {
+                "type": "string"
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "List of customers",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/CustomerResponse"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "post": {
+          "summary": "Create a new customer",
+          "requestBody": {
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Customer"
+                }
+              }
+            }
+          },
+          "responses": {
+            "201": {
+              "description": "Customer created",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/Customer"
+                  }
+                }
+              }
+            },
+            "400": {
+              "description": "Invalid input",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/Error"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "/api/customers/{id}": {
+        "get": {
+          "summary": "Get customer by ID",
+          "parameters": [
+            {
+              "name": "id",
+              "in": "path",
+              "required": true,
+              "description": "ID of customer to retrieve",
+              "schema": {
+                "type": "string"
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Customer data",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/Customer"
+                  }
+                }
+              }
+            },
+            "404": {
+              "description": "Customer not found",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/Error"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "put": {
+          "summary": "Update customer by ID",
+          "parameters": [
+            {
+              "name": "id",
+              "in": "path",
+              "required": true,
+              "description": "ID of customer to update",
+              "schema": {
+                "type": "string"
+              }
+            }
+          ],
+          "requestBody": {
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Customer"
+                }
+              }
+            }
+          },
+          "responses": {
+            "200": {
+              "description": "Customer updated",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/Customer"
+                  }
+                }
+              }
+            },
+            "400": {
+              "description": "Invalid input",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/Error"
+                  }
+                }
+              }
+            },
+            "404": {
+              "description": "Customer not found",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/Error"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "delete": {
+          "summary": "Delete customer by ID",
+          "parameters": [
+            {
+              "name": "id",
+              "in": "path",
+              "required": true,
+              "description": "ID of customer to delete",
+              "schema": {
+                "type": "string"
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Customer deleted",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/Success"
+                  }
+                }
+              }
+            },
+            "404": {
+              "description": "Customer not found",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/Error"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "components": {
+      "schemas": {
+        "Customer": {
+          "type": "object",
+          "required": ["CustomerID", "Gender", "Age", "AnnualIncome", "SpendingScore", "Profession", "WorkExperience", "FamilySize"],
+          "properties": {
+            "CustomerID": {
+              "type": "integer",
+              "example": 1
+            },
+            "Gender": {
+              "type": "string",
+              "enum": ["Male", "Female", "Other"],
+              "example": "Male"
+            },
+            "Age": {
+              "type": "integer",
+              "example": 19
+            },
+            "AnnualIncome": {
+              "type": "integer",
+              "example": 15000
+            },
+            "SpendingScore": {
+              "type": "integer",
+              "example": 39,
+              "minimum": 1,
+              "maximum": 100
+            },
+            "Profession": {
+              "type": "string",
+              "example": "Healthcare"
+            },
+            "WorkExperience": {
+              "type": "integer",
+              "example": 1
+            },
+            "FamilySize": {
+              "type": "integer",
+              "example": 4
+            }
+          }
+        },
+        "Customers": {
+          "type": "array",
+          "items": {
+            "$ref": "#/components/schemas/Customer"
+          }
+        },
+        "CustomerResponse": {
+          "type": "object",
+          "properties": {
+            "success": {
+              "type": "boolean",
+              "example": true
+            },
+            "message": {
+              "type": "string",
+              "example": "Customers retrieved successfully"
+            },
+            "data": {
+              "type": "object",
+              "properties": {
+                "total": {
+                  "type": "integer",
+                  "example": 100
+                },
+                "page": {
+                  "type": "integer",
+                  "example": 1
+                },
+                "limit": {
+                  "type": "integer",
+                  "example": 10
+                },
+                "data": {
+                  "$ref": "#/components/schemas/Customers"
+                }
+              }
+            }
+          }
+        },
+        "Error": {
+          "type": "object",
+          "properties": {
+            "success": {
+              "type": "boolean",
+              "example": false
+            },
+            "message": {
+              "type": "string",
+              "example": "Error message"
+            }
+          }
+        },
+        "Success": {
+          "type": "object",
+          "properties": {
+            "success": {
+              "type": "boolean",
+              "example": true
+            },
+            "message": {
+              "type": "string",
+              "example": "Operation successful"
+            }
+          }
+        }
+      }
+    }
+  }
+  
